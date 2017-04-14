@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 11:57:09 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/14 12:32:33 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/14 16:22:11 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,17 +153,17 @@ void	sort_dir(t_dir **dir)
 {
 	t_dir *direct;
 	t_dir *start;
-	struct dirent *aux;
+	char *aux;
 
 	start = *dir;
 	direct = *dir;
 	while (direct->next != NULL)
 	{
-		if (ft_strcmp(direct->dp->d_name, direct->next->dp->d_name) > 0)
+		if (ft_strcmp(direct->str, direct->next->str) > 0)
 		{
-			aux = direct->dp;
-			direct->dp = direct->next->dp;
-			direct->next->dp = aux;
+			aux = direct->str;
+			direct->str = direct->next->str;
+			direct->next->str = aux;
 			direct = start;
 		}
 		else
@@ -172,14 +172,17 @@ void	sort_dir(t_dir **dir)
 	*dir = start;
 }
 
-void	add_elem(t_dir **dir, struct dirent *dp)
+void	add_elem(t_dir **dir, char *dp)
 {
 	t_dir *tmp;
 
 	tmp = (t_dir *)malloc(sizeof(t_dir));
-	tmp->dp = dp;
-	tmp->next = *dir;
-	*dir = tmp;
+	if (tmp)
+	{
+		tmp->str = ft_strdup(dp);
+		tmp->next = *dir;
+		*dir = tmp;
+	}
 }
 
 int time_switch_cond(const char *s1, const char *s2)
@@ -198,17 +201,17 @@ void	sort_by_date(t_dir **dir)
 {
 	t_dir *direct;
 	t_dir *start;
-	struct dirent *aux;
+	char *aux;
 
 	start = *dir;
 	direct = *dir;
 	while (direct->next != NULL)
 	{
-		if (time_switch_cond(direct->dp->d_name, direct->next->dp->d_name))
+		if (time_switch_cond(direct->str, direct->next->str))
 		{
-			aux = direct->dp;
-			direct->dp = direct->next->dp;
-			direct->next->dp = aux;
+			aux = direct->str;
+			direct->str = direct->next->str;
+			direct->next->str = aux;
 			direct = start;
 		}
 		else
@@ -221,17 +224,17 @@ void	reverse_sort(t_dir **dir)
 {
 	t_dir *direct;
 	t_dir *start;
-	struct dirent *aux;
+	char *aux;
 
 	start = *dir;
 	direct = *dir;
 	while (direct->next != NULL)
 	{
-		if (ft_strcmp(direct->dp->d_name, direct->next->dp->d_name) < 0)
+		if (ft_strcmp(direct->str, direct->next->str) < 0)
 		{
-			aux = direct->dp;
-			direct->dp = direct->next->dp;
-			direct->next->dp = aux;
+			aux = direct->str;
+			direct->str = direct->next->str;
+			direct->next->str = aux;
 			direct = start;
 		}
 		else
@@ -240,7 +243,7 @@ void	reverse_sort(t_dir **dir)
 	*dir = start;
 }
 
-void	put_simple(const char *name, int c)
+void	put_simple(char *name, int c)
 {
 	DIR *dirp;
 	struct dirent *dpr;
@@ -249,20 +252,22 @@ void	put_simple(const char *name, int c)
 
 	dir = NULL;
 	//dpr = NULL;
-	c = 0;
 	max = maxim_size(name);
 	if (!(dirp = opendir(name)))
 		return ;
 	while ((dpr = readdir(dirp)) != NULL)
 	{
-		add_elem(&dir, dpr);
-		//ft_putendl(dir->dp->d_name);//works if u cut the thing below
+		//ft_putstr("--------");
+		//ft_putstr(dpr->d_name);
+		add_elem(&dir, dpr->d_name);
+		//printf("%s\n",dir->dp->d_name);//works if u cut the thing below
 		/*if (dir->next)
 		{
 			ft_putstr("next ");
 			ft_putendl(dir->next->dp->d_name);//good
 		}*/
 	}
+
 	//ft_putstr("last ");
 	/*ft_putendl(dir->dp->d_name);
 	ft_putendl(dir->next->dp->d_name);//good
@@ -276,29 +281,34 @@ void	put_simple(const char *name, int c)
 			sort_by_date(&dir);
 	}
 	else if (c == 5)
-		reverse_sort(&dir);/*
+		reverse_sort(&dir);
 	while (dir)
 	{
 		if (c == 3)
-			if (dir->dp->d_name[0] != '.')//this can be removed and => a -la flag
-				put_stats(dir->dp->d_name, max);
+			if (dir->str[0] != '.')//this can be removed and => a -la flag
+			{
+				if (ft_strcmp(name, ".") == 0)
+					put_stats(dir->str, max);
+				else
+					put_stats(ft_strjoin(ft_strjoin(name, "/"), dir->str), max);
+			}
 		if (c == 1)
 		{
-			ft_putendl(dir->dp->d_name);
+			ft_putendl(dir->str);
 		}
-		else if (dir->dp->d_name[0] != '.')
-			ft_putendl(dir->dp->d_name);
+		else if (dir->str[0] != '.')
+			ft_putendl(dir->str);
 		dir = dir->next;
-	}*/
+	}/*
 	while (dir)
 	{
 		if (dir->dp->d_name[0] != '.')
 		{
-			ft_putstr(dir->dp->d_name);
-			ft_putchar('\n');
+			//printf("%s\n", dir->dp->d_name);
+			ft_putendl(dir->str);
 		}
 		dir = dir->next;
-	}
+	}*/
 	(void)closedir(dirp);
 }
 
@@ -308,6 +318,7 @@ int main(int ac, char **av)
 	int c;
 
 	i = 1;
+	errno = 0;
 	c = 0;
 	if (ac == 1)
 		put_simple(".", c);

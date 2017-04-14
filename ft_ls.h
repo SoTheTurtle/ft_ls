@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 12:00:26 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/09 14:20:01 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/14 14:52:18 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 typedef struct s_dir
 {
-	struct dirent *dp;
+	char		 *str;
 	struct s_dir *next;
 }				t_dir;
 extern int errno;

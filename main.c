@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 11:57:09 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/15 12:48:52 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/15 13:36:17 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,17 +251,18 @@ int is_dir(char *name)
 void put_totsize(t_dir *dir)
 {
 	struct stat file_stat;
-	off_t size;
+	quad_t size;
 
 	size = 0;
 	while (dir)
 	{
 		stat(dir->str, &file_stat);
-		size += file_stat.st_size;
+		if (dir->str[0] != '.')
+			size += file_stat.st_blocks;
 		dir = dir->next;
 	}
 	ft_putstr("total ");
-	ft_putendl(ft_itoaBase((intmax_t)size / 2048, 10));
+	ft_putendl(ft_itoaBase((intmax_t)size, 10));
 }
 
 void	put_simple(char *name, int c)

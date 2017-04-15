@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 11:57:09 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/14 16:22:11 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/15 12:48:52 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,23 +129,19 @@ void	put_stats(const char *s, off_t max)
 	put_time(file_stat);
 }
 
-off_t	maxim_size(const char *name)
+off_t	maxim_size(t_dir *dp_l)
 {
-	DIR *dirp;
-	struct dirent *dp;
 	struct stat file_stat;
 	off_t max;
 
 	max = 0;
-	if (!(dirp = opendir(name)))
-		return (0);
-	while ((dp = readdir(dirp)) != NULL)
+	while (dp_l)
 	{
-		if (stat(dp->d_name, &file_stat) < 0)
+		if (stat(dp_l->str, &file_stat) < 0)
 			return (0);
 		max = (file_stat.st_size > max ? file_stat.st_size : max);
+		dp_l = dp_l->next;
 	}
-	closedir(dirp);
 	return (max);
 }
 
@@ -243,37 +239,50 @@ void	reverse_sort(t_dir **dir)
 	*dir = start;
 }
 
+int is_dir(char *name)
+{
+	struct stat file_stat;
+	stat(name, &file_stat);
+	if ((file_stat.st_mode & S_IFMT) == S_IFDIR)
+		return (1);
+	return (0);
+}
+
+void put_totsize(t_dir *dir)
+{
+	struct stat file_stat;
+	off_t size;
+
+	size = 0;
+	while (dir)
+	{
+		stat(dir->str, &file_stat);
+		size += file_stat.st_size;
+		dir = dir->next;
+	}
+	ft_putstr("total ");
+	ft_putendl(ft_itoaBase((intmax_t)size / 2048, 10));
+}
+
 void	put_simple(char *name, int c)
 {
 	DIR *dirp;
 	struct dirent *dpr;
 	off_t max;
+	//int		minor_max;
+	//int		major_max;
 	t_dir *dir;
+	t_dir *pimp;
 
 	dir = NULL;
-	//dpr = NULL;
-	max = maxim_size(name);
 	if (!(dirp = opendir(name)))
 		return ;
 	while ((dpr = readdir(dirp)) != NULL)
 	{
-		//ft_putstr("--------");
-		//ft_putstr(dpr->d_name);
 		add_elem(&dir, dpr->d_name);
-		//printf("%s\n",dir->dp->d_name);//works if u cut the thing below
-		/*if (dir->next)
-		{
-			ft_putstr("next ");
-			ft_putendl(dir->next->dp->d_name);//good
-		}*/
 	}
-
-	//ft_putstr("last ");
-	/*ft_putendl(dir->dp->d_name);
-	ft_putendl(dir->next->dp->d_name);//good
-	ft_putendl(dir->next->next->dp->d_name);//good
-	ft_putendl(dir->next->next->next->dp->d_name);//good
-	ft_putendl(dir->next->next->next->next->dp->d_name);//good*/
+	if (!(ft_strstr(name, "/dev")))
+		max = maxim_size(dir);
 	if (c != 5)
 	{
 		sort_dir(&dir);
@@ -282,6 +291,9 @@ void	put_simple(char *name, int c)
 	}
 	else if (c == 5)
 		reverse_sort(&dir);
+	pimp = dir;
+	if (c == 3)
+		put_totsize(dir);
 	while (dir)
 	{
 		if (c == 3)
@@ -299,16 +311,24 @@ void	put_simple(char *name, int c)
 		else if (dir->str[0] != '.')
 			ft_putendl(dir->str);
 		dir = dir->next;
-	}/*
-	while (dir)
+	}
+	if (c == 2)
 	{
-		if (dir->dp->d_name[0] != '.')
+		while (pimp)
 		{
-			//printf("%s\n", dir->dp->d_name);
-			ft_putendl(dir->str);
+			if (is_dir(ft_strjoin(ft_strjoin(name, "/"), pimp->str)) &&
+					(pimp->str[0] != '.'))
+			{
+				ft_putchar('\n');
+				ft_putstr(name);
+				ft_putchar('/');
+				ft_putstr(pimp->str);
+				ft_putstr(":\n");
+				put_simple(ft_strjoin(ft_strjoin(name, "/"), pimp->str), c);
+			}
+			pimp = pimp->next;
 		}
-		dir = dir->next;
-	}*/
+	}
 	(void)closedir(dirp);
 }
 
@@ -316,6 +336,7 @@ int main(int ac, char **av)
 {
 	int i;
 	int c;
+	int z = 0;
 
 	i = 1;
 	errno = 0;
@@ -347,14 +368,23 @@ int main(int ac, char **av)
 		i++;
 		c = 5;
 	}
-
+	if (i + 1 < ac)
+		z = 1;
 	if (i == ac && c != 0)
 		put_simple(".", c);
 	else while (i < ac)
 	{
+		if (z)
+		{
+			ft_putstr(av[i]);
+			ft_putstr(":\n");
+		}
 		put_simple(av[i], c);
 		i++;
+		if (z)
+			ft_putchar('\n');
 	}
 
+	//if there are multiple arguments should write the name of each before
 	return (0);
 }

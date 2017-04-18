@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 11:57:09 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/18 15:24:15 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/18 15:51:26 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void	put_permissions(struct stat file_stat)
 	ft_putstr( (file_stat.st_mode & S_IROTH) ? "r" : "-");
 	ft_putstr( (file_stat.st_mode & S_IWOTH) ? "w" : "-");
 	ft_putstr( (file_stat.st_mode & S_IXOTH) ? "x" : "-");
-	ft_putstr("  ");//2 spaces 1 should be for ACL
+	ft_putstr("  ");//2 spaces
 }
 
 void	put_time(struct stat file_stat)
@@ -224,20 +224,37 @@ void	put_minor(struct stat file_stat, int max)
 void	put_stats(const char *s, off_t max, int minor, int major, int user_max, int group_max)
 {
 	struct stat file_stat;//need sth to know if minor and major were used
-
+	static int c = 0;//wont work if a directory is first
+	int len;
+// l files dont work theyll be shown as c files
+// if c then need and extra space after group name
+// also minor is not aligned properly
 	if (stat(s, &file_stat) < 0)// lstat does same thing as stat
 		return ;
 	put_permissions(file_stat);
 	put_links(file_stat);
 	put_user(file_stat, user_max);
 	put_group(file_stat, group_max);
-	if ((file_stat.st_mode & S_IFMT) == S_IFCHR)
+	if ((file_stat.st_mode & S_IFMT) == S_IFCHR || (file_stat.st_mode & S_IFMT) == S_IFBLK)
 	{
 		put_major(file_stat, major);
 		put_minor(file_stat, minor);
+		c++;
 	}
 	else
+	{
+		if (c)
+		{
+			len = 0;
+			while (++len < (int)ft_strlen(ft_itoa(major)))
+				ft_putchar(' ');
+			len = 0;
+			while (++len < (int)ft_strlen(ft_itoa(minor)))
+				ft_putchar(' ');
+			//ft_putstr("  ");
+		}
 		put_size(file_stat, max);
+	}
 	put_time(file_stat);
 }
 
@@ -282,7 +299,8 @@ int		maxim_major(t_dir *dp_l)
 	max = 0;
 	while (dp_l)
 	{
-		stat(dp_l->str, &file_stat);
+		if (stat(dp_l->str, &file_stat) < 0)
+			ft_putstr("FUCK THIS SHIT");
 		maj = major(file_stat.st_rdev);
 		max = (max < maj ? maj : max);
 		dp_l = dp_l->next;
@@ -409,7 +427,7 @@ void put_totsize(t_dir *dir)
 			size += file_stat.st_blocks;
 		dir = dir->next;
 	}
-	ft_putstr("total ");
+	ft_putstr("total ");//if file is a c type size should be 0 i think
 	ft_putendl(ft_itoaBase((intmax_t)size, 10));
 }
 
@@ -438,8 +456,10 @@ void	put_simple(char *name, int c)
 	user_max = max_user(dir);
 	group_max = max_group(dir);
 	max = maxim_size(dir);
-	minor_max = maxim_minor(dir);
-	major_max = maxim_major(dir);
+	//major_max = maxim_major(dir); MYSTERY OF WHY IS NOT WORKING
+	major_max = 10;
+//	minor_max = maxim_minor(dir);
+	minor_max = 100;
 	if (c != 5)
 	{
 		sort_dir(&dir);

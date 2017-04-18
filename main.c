@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/01 11:57:09 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/15 13:36:17 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/18 15:24:15 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,15 @@ void	put_size(struct stat file_stat, off_t max)
 	off_t i;
 	char *s;
 	char *smax;
+	int len_s;
+	int len_smax;
 
 	i = 0;
 	smax = ft_itoaBase((intmax_t)max, 10);
 	s = ft_itoaBase((intmax_t)file_stat.st_size, 10);
-	while (ft_strlen(s) + i < ft_strlen(smax))
+	len_s = ft_strlen(s);
+	len_smax = ft_strlen(smax);
+	while (len_s + i < len_smax)
 	{
 		ft_putchar(' ');
 		i+=1;
@@ -30,21 +34,39 @@ void	put_size(struct stat file_stat, off_t max)
 	ft_putstr(" ");
 }
 
-void	put_group(struct stat file_stat)
+void	put_group(struct stat file_stat, int max)
 {
 	struct group *grp;
+	int j;
+	int len;
 
+	j = 0;
 	grp = getgrgid(file_stat.st_gid);
 	ft_putstr(grp->gr_name);
+	len = ft_strlen(grp->gr_name);
+	while (j + len < max)
+	{
+		ft_putchar(' ');
+		j++;
+	}
 	ft_putstr("  ");
 }
 
-void	put_user(struct stat file_stat)
+void	put_user(struct stat file_stat, int max)
 {
 	struct passwd *user;
+	int j;
+	int len;
 
+	j = 0;
 	user = getpwuid(file_stat.st_uid);
 	ft_putstr(user->pw_name);
+	len = ft_strlen(user->pw_name);
+	while (j + len < max)
+	{
+		ft_putchar(' ');
+		j++;
+	}
 	ft_putstr("  ");
 }
 
@@ -52,6 +74,44 @@ void	put_links(struct stat file_stat)
 {
 	ft_putstr(ft_itoa((int)file_stat.st_nlink));
 	ft_putchar(' ');
+}
+
+int max_group(t_dir *dp)
+{
+	struct stat file_stat;
+	struct group *grp;
+	int max;
+	int j;
+
+	max = 0;
+	while (dp)
+	{
+		stat(dp->str, &file_stat);
+		grp = getgrgid(file_stat.st_gid);
+		j = ft_strlen(grp->gr_name);
+		max = (max < j ? j : max);
+		dp = dp->next;
+	}
+	return (max);
+}
+
+int max_user(t_dir *dp)
+{
+	struct stat file_stat;
+	struct passwd *user;
+	int max;
+	int j;
+
+	max = 0;
+	while (dp)
+	{
+		stat(dp->str, &file_stat);
+		user = getpwuid(file_stat.st_uid);
+		j = ft_strlen(user->pw_name);
+		max = (max < j ? j : max);
+		dp = dp->next;
+	}
+	return (max);
 }
 
 void	put_permissions(struct stat file_stat)
@@ -115,17 +175,69 @@ void	put_time(struct stat file_stat)
 	ft_putchar(' ');
 }
 
-void	put_stats(const char *s, off_t max)
+void	put_major(struct stat file_stat, int max)
 {
-	struct stat file_stat;
+	int maj;
+	char *s;
+	char *smax;
+	int len[2];
+	int i;
+
+	i = 0;
+	maj = major(file_stat.st_rdev);
+	s = ft_itoaBase((intmax_t)maj, 10);
+	smax = ft_itoaBase((intmax_t)max, 10);
+	len[0] = ft_strlen(s);
+	len[1] = ft_strlen(smax);
+	while (len[0] + i < len[1])
+	{
+		ft_putchar(' ');
+		i++;
+	}
+	ft_putstr(s);
+	ft_putstr(", ");
+}
+
+void	put_minor(struct stat file_stat, int max)
+{
+	int min;
+	char *s;
+	char *smax;
+	int len_s[2];
+	int i;
+
+	min = minor(file_stat.st_rdev);
+	s = ft_itoaBase((intmax_t)min, 10);
+	smax = ft_itoaBase((intmax_t)max, 10);
+	len_s[0] = ft_strlen(s);
+	len_s[1] = ft_strlen(smax);
+	i = 0;
+	while (len_s[0] + i < len_s[1])
+	{
+		ft_putchar(' ');
+		i++;
+	}
+	ft_putstr(s);
+	ft_putstr(" ");
+}
+
+void	put_stats(const char *s, off_t max, int minor, int major, int user_max, int group_max)
+{
+	struct stat file_stat;//need sth to know if minor and major were used
 
 	if (stat(s, &file_stat) < 0)// lstat does same thing as stat
 		return ;
 	put_permissions(file_stat);
 	put_links(file_stat);
-	put_user(file_stat);
-	put_group(file_stat);
-	put_size(file_stat, max);
+	put_user(file_stat, user_max);
+	put_group(file_stat, group_max);
+	if ((file_stat.st_mode & S_IFMT) == S_IFCHR)
+	{
+		put_major(file_stat, major);
+		put_minor(file_stat, minor);
+	}
+	else
+		put_size(file_stat, max);
 	put_time(file_stat);
 }
 
@@ -137,11 +249,47 @@ off_t	maxim_size(t_dir *dp_l)
 	max = 0;
 	while (dp_l)
 	{
-		if (stat(dp_l->str, &file_stat) < 0)
-			return (0);
+		stat(dp_l->str, &file_stat);
 		max = (file_stat.st_size > max ? file_stat.st_size : max);
 		dp_l = dp_l->next;
 	}
+	return (max);
+}
+
+int		maxim_minor(t_dir *dp_l)
+{
+	int max;
+	struct stat file_stat;
+	int min;
+
+	max = 0;
+	while (dp_l)
+	{
+		stat(dp_l->str, &file_stat);
+		min = minor(file_stat.st_rdev);
+		max = (max < min ? min : max);
+		dp_l = dp_l->next;
+	}
+	return (max);
+}
+
+int		maxim_major(t_dir *dp_l)
+{
+	int max;
+	struct stat file_stat;
+	int maj;
+
+	max = 0;
+	while (dp_l)
+	{
+		stat(dp_l->str, &file_stat);
+		maj = major(file_stat.st_rdev);
+		max = (max < maj ? maj : max);
+		dp_l = dp_l->next;
+	}
+	/*ft_putstr("THIS IS MAXIMUM MAJOR |");
+	ft_putnbr(max);
+	ft_putstr("| \n");THIS IS WHERE IT FAILES*/
 	return (max);
 }
 
@@ -270,20 +418,28 @@ void	put_simple(char *name, int c)
 	DIR *dirp;
 	struct dirent *dpr;
 	off_t max;
-	//int		minor_max;
-	//int		major_max;
+	int		minor_max;
+	int		major_max;
+	int		user_max;
+	int		group_max;
 	t_dir *dir;
 	t_dir *pimp;
 
 	dir = NULL;
+	max = 0;
+	minor_max = 0;
+	major_max = 0;
 	if (!(dirp = opendir(name)))
 		return ;
 	while ((dpr = readdir(dirp)) != NULL)
 	{
 		add_elem(&dir, dpr->d_name);
 	}
-	if (!(ft_strstr(name, "/dev")))
-		max = maxim_size(dir);
+	user_max = max_user(dir);
+	group_max = max_group(dir);
+	max = maxim_size(dir);
+	minor_max = maxim_minor(dir);
+	major_max = maxim_major(dir);
 	if (c != 5)
 	{
 		sort_dir(&dir);
@@ -301,9 +457,10 @@ void	put_simple(char *name, int c)
 			if (dir->str[0] != '.')//this can be removed and => a -la flag
 			{
 				if (ft_strcmp(name, ".") == 0)
-					put_stats(dir->str, max);
+					put_stats(dir->str, max, minor_max, major_max, user_max, group_max);//idk if this if is necessery
 				else
-					put_stats(ft_strjoin(ft_strjoin(name, "/"), dir->str), max);
+					put_stats(ft_strjoin(ft_strjoin(name, "/"), dir->str), max,
+							minor_max, major_max, user_max, group_max);
 			}
 		if (c == 1)
 		{

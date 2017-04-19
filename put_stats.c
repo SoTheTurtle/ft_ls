@@ -12,7 +12,7 @@
 
 #include "ft_ls.h"
 
-void	put_stats(const char *s, off_t max, int user_max, int group_max, int z)
+void	put_stats(const char *s, off_t max, int user_max, int group_max, int z, int max_link)
 {
 	struct stat file_stat;//need sth to know if minor and major were used
 	static int c = 0;//wont work if a directory is first
@@ -23,7 +23,7 @@ void	put_stats(const char *s, off_t max, int user_max, int group_max, int z)
 	if (lstat(s, &file_stat) < 0)// lstat does same thing as stat
 		return ;
 	put_permissions(file_stat);
-	put_links(file_stat);
+	put_links(file_stat, max_link);
 	put_user(file_stat, user_max);
 	put_group(file_stat, group_max);
 	if (z)

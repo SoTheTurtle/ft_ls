@@ -42,17 +42,18 @@ void			add_elem(t_dir **dir, char *dp, char *name);
 void			sort_dir(t_dir **dir);
 off_t			maxim_size(t_dir *dp_l);
 void			put_stats(const char *s, off_t max, int user_max, int group_max,
-		int z);
+		int z, int max_links);
 void			put_minor(struct stat file_stat);
 void			put_major(struct stat file_stat);
 void			put_time(struct stat file_stat);
 void			put_permissions(struct stat file_stat);
 int				max_user(t_dir *dp);
 int				max_group(t_dir *dp);
-void			put_links(struct stat file_stat);
+void			put_links(struct stat file_stat, int max_links);
 void			put_user(struct stat file_stat, int max);
 void			put_group(struct stat file_stat, int max);
 void			put_size(struct stat file_stat, off_t max);
 int 			dev_alert(t_dir *dir);
+int				max_links(t_dir *dir);
 
 #endif

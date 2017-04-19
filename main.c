@@ -23,20 +23,29 @@ void	put_simple(char *name, int c)
 	int		group_max;
 	t_dir *dir;
 	t_dir *pimp;
+	int n;
 
 	dir = NULL;
+    errno = 0;
 	//max = 0;
 	//minor_max = 0;
 	//major_max = 0;
 	if (!(dirp = opendir(name)))
-		return ;
+		//return ;
+    	if (errno)
+		{
+			ft_putstr("ft_ls: ");
+        	perror(name);
+        	return ;
+    	}
 	while ((dpr = readdir(dirp)) != NULL)
 	{
 		if (ft_strcmp(name, ".") != 0)
-			add_elem(&dir, ft_strjoin(ft_strjoin(name, "/"), dpr->d_name));
+			add_elem(&dir, ft_strjoin(ft_strjoin(name, "/"), dpr->d_name), dpr->d_name);
 		else
-			add_elem(&dir, dpr->d_name);
+			add_elem(&dir, dpr->d_name, dpr->d_name);
 	}
+	n = max_links(dir);
 	user_max = max_user(dir);
 	group_max = max_group(dir);
 	max = maxim_size(dir);
@@ -58,9 +67,9 @@ void	put_simple(char *name, int c)
 	while (dir)
 	{
 		if (c == 3)
-			if (dir->str[0] != '.')//this can be removed and => a -la flag
+			if (dir->name[0] != '.')//this can be removed and => a -la flag
 			{
-                put_stats(dir->str, max, user_max, group_max, dev_alert(dir));
+                put_stats(dir->str, max, user_max, group_max, dev_alert(dir), n);
 				/*if (ft_strcmp(name, ".") == 0)
 					put_stats(dir->str, max, user_max, group_max, dev_alert(dir));//idk if this if is necessery
 				else
@@ -68,25 +77,26 @@ void	put_simple(char *name, int c)
 			}
 		if (c == 1)
 		{
-			ft_putendl(dir->str);
+			ft_putendl(dir->name);
 		}
-		else if (dir->str[0] != '.')
-			ft_putendl(dir->str);
+		else if (dir->name[0] != '.')
+			ft_putendl(dir->name);
 		dir = dir->next;
 	}
 	if (c == 2)
 	{
 		while (pimp)
 		{
-			if (is_dir(ft_strjoin(ft_strjoin(name, "/"), pimp->str)) &&
-					(pimp->str[0] != '.'))
+			if (is_dir(pimp->str) &&
+					(pimp->name[0] != '.'))
 			{
 				ft_putchar('\n');
 				ft_putstr(name);
 				ft_putchar('/');
 				ft_putstr(pimp->str);
 				ft_putstr(":\n");
-				put_simple(ft_strjoin(ft_strjoin(name, "/"), pimp->str), c);
+	//			put_simple(ft_strjoin(ft_strjoin(name, "/"), pimp->str), c);
+				put_simple(ft_strjoin(ft_strjoin(name, "/"), pimp->name), c);// put(pimp->str)
 			}
 			pimp = pimp->next;
 		}

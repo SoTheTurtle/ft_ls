@@ -32,6 +32,7 @@ SRC = libft/libft.a\
 	  sort_by_date.c\
 	  sort_dir.c\
 	  dev_alert.c\
+	  max_links.c\
 	  time_switch_cond.c
 DIRS = libft/
 

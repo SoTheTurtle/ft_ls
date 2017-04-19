@@ -22,8 +22,11 @@ void	reverse_sort(t_dir **dir)
 	direct = *dir;
 	while (direct->next != NULL)
 	{
-		if (ft_strcmp(direct->str, direct->next->str) < 0)
+		if (ft_strcmp(direct->name, direct->next->name) < 0)
 		{
+			aux = direct->name;
+			direct->name = direct->next->name;
+			direct->next->name = aux;
 			aux = direct->str;
 			direct->str = direct->next->str;
 			direct->next->str = aux;

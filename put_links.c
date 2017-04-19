@@ -12,8 +12,17 @@
 
 #include "ft_ls.h"
 
-void	put_links(struct stat file_stat)
+void	put_links(struct stat file_stat, int max_links)
 {
-	ft_putstr(ft_itoa((int)file_stat.st_nlink));
+	char *s;
+	int n;
+	int c;
+
+	c = (int)ft_strlen(ft_itoa(max_links));
+	s = ft_itoa((int)file_stat.st_nlink);
+	n = (int)ft_strlen(s);
+	while (++n < c)
+		ft_putchar(' ');
+	ft_putstr(s);
 	ft_putchar(' ');
 }

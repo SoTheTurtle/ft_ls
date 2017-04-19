@@ -1,37 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   sort_by_date.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 11:13:00 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 11:13:36 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void	sort_by_date(t_dir **dir)
 {
-	size_t	i;
-	size_t	j;
+	t_dir *direct;
+	t_dir *start;
+	char *aux;
 
-	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	start = *dir;
+	direct = *dir;
+	while (direct->next != NULL)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
+		if (time_switch_cond(direct->str, direct->next->str))
 		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
+			aux = direct->str;
+			direct->str = direct->next->str;
+			direct->next->str = aux;
+			direct = start;
 		}
-		i = 0;
-		j++;
+		else
+			direct = direct->next;
 	}
-	return (NULL);
+	*dir = start;
 }

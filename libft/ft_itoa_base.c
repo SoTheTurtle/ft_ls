@@ -6,13 +6,13 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/12 15:53:43 by sbanc             #+#    #+#             */
-/*   Updated: 2017/03/19 14:44:22 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/19 13:00:37 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_itoaBase(intmax_t value, int base)
+char	*ft_itoa_base(intmax_t value, int base)
 {
 	uintmax_t nr;
 	int i;

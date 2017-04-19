@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   put_major.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 12:08:04 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 12:08:32 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void	put_major(struct stat file_stat)
 {
-	size_t	i;
-	size_t	j;
+	int maj;
+	char *s;
+	int len;
+	int i;
 
 	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	maj = major(file_stat.st_rdev);
+	s = ft_itoa_base((intmax_t)maj, 10);
+	len = ft_strlen(s);
+	while (len + i < 2)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		ft_putchar(' ');
+		i++;
 	}
-	return (NULL);
+	ft_putstr(s);
+	ft_putstr(", ");
 }

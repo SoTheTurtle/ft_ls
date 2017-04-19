@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   max_group.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 12:11:13 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 12:11:32 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+int max_group(t_dir *dp)
 {
-	size_t	i;
-	size_t	j;
+	struct stat file_stat;
+	struct group *grp;
+	int max;
+	int j;
 
-	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	max = 0;
+	while (dp)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		stat(dp->str, &file_stat);
+		grp = getgrgid(file_stat.st_gid);
+		j = ft_strlen(grp->gr_name);
+		max = (max < j ? j : max);
+		dp = dp->next;
 	}
-	return (NULL);
+	return (max);
 }

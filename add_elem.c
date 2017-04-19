@@ -1,37 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   add_elem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 11:14:46 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 11:15:50 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void	add_elem(t_dir **dir, char *dp, char *name)
 {
-	size_t	i;
-	size_t	j;
+	t_dir *tmp;
 
-	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	tmp = (t_dir *)malloc(sizeof(t_dir));
+	if (tmp)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		tmp->str = ft_strdup(dp);
+		tmp->name = ft_strdup(name);
+		tmp->next = *dir;
+		*dir = tmp;
 	}
-	return (NULL);
 }

@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   put_minor.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 12:07:28 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 12:07:42 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void	put_minor(struct stat file_stat)
 {
-	size_t	i;
-	size_t	j;
+	int min;
+	char *s;
+	int len_s;
+	int i;
 
+	min = minor(file_stat.st_rdev);
+	s = ft_itoa_base((intmax_t)min, 10);
+	len_s = ft_strlen(s);
 	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	while (len_s + i < 3)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		ft_putchar(' ');
+		i++;
 	}
-	return (NULL);
+	ft_putstr(s);
+	ft_putstr(" ");
 }

@@ -1,37 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   put_time.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 12:08:45 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 12:09:09 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void	put_time(struct stat file_stat)
 {
-	size_t	i;
-	size_t	j;
+	time_t timev;
+	int c;
+	char *s;
+	int i;
 
+	c = 0;
+	time(&timev);
+	if (timev - file_stat.st_mtimespec.tv_sec > 15778463)
+		c = 1;
+	s = ctime(&file_stat.st_mtimespec.tv_sec);
 	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	while (i++ < 4)
+		s++;
+	i = 0;
+	while (i < 7)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		ft_putchar(*s++);
+		i++;
 	}
-	return (NULL);
+	if (c == 1)
+		while (*s != ' ')
+			s++;
+	i = 0;
+	while (i < 5)
+	{
+		ft_putchar(*s++);
+		i++;
+	}
+	ft_putchar(' ');
 }

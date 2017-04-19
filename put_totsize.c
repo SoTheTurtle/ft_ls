@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   put_totsize.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/23 11:46:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:59:37 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/19 11:09:53 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/19 11:10:43 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_ls.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+void put_totsize(t_dir *dir)
 {
-	size_t	i;
-	size_t	j;
+	struct stat file_stat;
+	quad_t size;
 
-	i = 0;
-	j = 0;
-	if (!*needle)
-		return ((char *)haystack);
-	while (haystack[j] && j < len)
+	size = 0;
+	while (dir)
 	{
-		while (needle[i] && haystack[j + i] && haystack[j + i] ==
-				needle[i] && j + i < len)
-		{
-			i++;
-			if (ft_strlen(needle) == i)
-				return ((char *)haystack + j);
-		}
-		i = 0;
-		j++;
+		stat(dir->str, &file_stat);
+		if (dir->str[0] != '.')
+			size += file_stat.st_blocks;
+		dir = dir->next;
 	}
-	return (NULL);
+	ft_putstr("total ");//if file is a c type size should be 0 i think
+	ft_putendl(ft_itoa_base((intmax_t)size, 10));
 }

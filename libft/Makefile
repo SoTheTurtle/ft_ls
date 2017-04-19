@@ -20,7 +20,7 @@ SRC = ft_atoi.c\
 	   ft_isdigit.c\
 	   ft_isprint.c\
 	   ft_itoa.c\
-	   ft_itoaBase.c\
+	   ft_itoa_base.c\
 	   ft_lstadd.c\
 	   ft_lstdel.c\
 	   ft_lstdelone.c\
@@ -87,7 +87,7 @@ OBJ = ft_atoi.o\
 	  ft_isdigit.o\
 	  ft_isprint.o\
 	  ft_itoa.o\
-	  ft_itoaBase.o\
+	  ft_itoa_base.o\
 	  ft_lstadd.o\
 	  ft_lstdel.o\
 	  ft_lstdelone.o\

@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/03 12:49:18 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/01 12:29:37 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/19 13:00:03 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <stdint.h>
 # include <wchar.h>
 
-char			*ft_itoaBase(intmax_t nbr, int base);
+char			*ft_itoa_base(intmax_t nbr, int base);
 int				get_next_line(int const fd, char **line);
 int				ft_poschr(char *s, char c);
 char			*ft_strcdup(char *s, char c);

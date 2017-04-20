@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 12:08:04 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:08:32 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/20 12:34:57 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	put_major(struct stat file_stat)
 {
-	int maj;
-	char *s;
-	int len;
-	int i;
+	int		maj;
+	char	*s;
+	int		len;
+	int		i;
 
 	i = 0;
 	maj = major(file_stat.st_rdev);

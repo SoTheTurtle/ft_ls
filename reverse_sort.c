@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 11:11:57 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 11:12:40 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/20 12:16:53 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	reverse_sort(t_dir **dir)
 {
-	t_dir *direct;
-	t_dir *start;
-	char *aux;
+	t_dir	*direct;
+	t_dir	*start;
+	char	*aux;
 
 	start = *dir;
 	direct = *dir;

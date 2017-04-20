@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 12:08:45 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:09:09 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/20 12:32:17 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	put_time(struct stat file_stat)
 {
-	time_t timev;
-	int c;
-	char *s;
-	int i;
+	time_t	timev;
+	int		c;
+	char	*s;
+	int		i;
 
 	c = 0;
 	time(&timev);
@@ -28,19 +28,13 @@ void	put_time(struct stat file_stat)
 	while (i++ < 4)
 		s++;
 	i = 0;
-	while (i < 7)
-	{
+	while (i++ < 7)
 		ft_putchar(*s++);
-		i++;
-	}
 	if (c == 1)
 		while (*s != ' ')
 			s++;
 	i = 0;
-	while (i < 5)
-	{
+	while (i++ < 5)
 		ft_putchar(*s++);
-		i++;
-	}
 	ft_putchar(' ');
 }

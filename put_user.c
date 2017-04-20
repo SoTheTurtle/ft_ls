@@ -6,7 +6,7 @@
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 12:12:55 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/19 12:13:09 by sbanc            ###   ########.fr       */
+/*   Updated: 2017/04/20 12:18:01 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	put_user(struct stat file_stat, int max)
 {
-	struct passwd *user;
-	int j;
-	int len;
+	struct passwd	*user;
+	int				j;
+	int				len;
 
 	j = 0;
 	user = getpwuid(file_stat.st_uid);

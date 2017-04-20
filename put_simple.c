@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   put_size.c                                         :+:      :+:    :+:   */
+/*   put_simple.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/04/19 12:22:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/20 12:33:17 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/20 11:33:10 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/20 11:33:35 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	put_size(struct stat file_stat, off_t max)
+void	put_simple(char *name, int c)
 {
-	off_t	i;
-	char	*s;
-	char	*smax;
-	int		len_s;
-	int		len_smax;
+	t_max *max;
+	t_dir *dir;
 
-	i = 0;
-	smax = ft_itoa_base((intmax_t)max, 10);
-	s = ft_itoa_base((intmax_t)file_stat.st_size, 10);
-	len_s = ft_strlen(s);
-	len_smax = ft_strlen(smax);
-	while (len_s + i < len_smax)
-	{
-		ft_putchar(' ');
-		i += 1;
-	}
-	ft_putstr(s);
-	ft_putstr(" ");
+	dir = NULL;
+	if (!(read_dir(&dir, name)))
+		return ;
+	max = (t_max *)malloc(sizeof(t_max));
+	max->link_max = max_links(dir);
+	max->user_max = max_user(dir);
+	max->group_max = max_group(dir);
+	max->max_size = maxim_size(dir);
+	put_help(dir, max, c);
+	if (c == 2)
+		put_help2(dir, name, c);
 }

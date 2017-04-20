@@ -1,39 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_by_date.c                                     :+:      :+:    :+:   */
+/*   read_dir.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbanc <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/04/19 11:13:00 by sbanc             #+#    #+#             */
-/*   Updated: 2017/04/20 12:16:09 by sbanc            ###   ########.fr       */
+/*   Created: 2017/04/20 11:31:38 by sbanc             #+#    #+#             */
+/*   Updated: 2017/04/20 12:17:38 by sbanc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	sort_by_date(t_dir **dir)
+int	read_dir(t_dir **dp, char *name)
 {
-	t_dir	*direct;
-	t_dir	*start;
-	char	*aux;
+	DIR				*dirp;
+	struct dirent	*dpr;
+	t_dir			*dir;
 
-	start = *dir;
-	direct = *dir;
-	while (direct->next != NULL)
+	dir = *dp;
+	if (!(dirp = opendir(name)))
 	{
-		if (time_switch_cond(direct->str, direct->next->str))
-		{
-			aux = direct->str;
-			direct->str = direct->next->str;
-			direct->next->str = aux;
-			aux = direct->name;
-			direct->name = direct->next->name;
-			direct->next->name = aux;
-			direct = start;
-		}
-		else
-			direct = direct->next;
+		ft_putstr("ft_ls: ");
+		perror(name);
+		return (0);
 	}
-	*dir = start;
+	while ((dpr = readdir(dirp)) != NULL)
+	{
+		if (ft_strcmp(name, ".") != 0)
+			add_elem(&dir, ft_strjoin(ft_strjoin(name, "/"), dpr->d_name),
+					dpr->d_name);
+		else
+			add_elem(&dir, dpr->d_name, dpr->d_name);
+	}
+	*dp = dir;
+	(void)closedir(dirp);
+	return (1);
 }

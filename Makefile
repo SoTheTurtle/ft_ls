@@ -6,7 +6,7 @@
 #    By: sbanc <marvin@42.fr>                       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/01 15:03:20 by sbanc             #+#    #+#              #
-#    Updated: 2017/04/19 12:26:10 by sbanc            ###   ########.fr        #
+#    Updated: 2017/04/20 11:33:45 by sbanc            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,10 @@ SRC = libft/libft.a\
 	  sort_dir.c\
 	  dev_alert.c\
 	  max_links.c\
+	  put_help.c\
+	  put_help2.c\
+	  read_dir.c\
+	  put_simple.c\
 	  time_switch_cond.c
 DIRS = libft/
 
